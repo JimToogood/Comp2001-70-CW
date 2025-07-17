@@ -1,10 +1,10 @@
 import pyodbc
 
+driver = "{ODBC Driver 17 for SQL Server}"
 server = "dist-6-505.uopnet.plymouth.ac.uk"
 database = "COMP2001_JToogood"
 username = "JToogood"
 password = "JxxU593*"
-driver = "{ODBC Driver 17 for SQL Server}"
 
 conn_str = (
     f"DRIVER={driver};"
@@ -23,7 +23,7 @@ try:
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
 
-    # Verify current database
+    # Verify connection
     cursor.execute("SELECT DB_NAME()")
     current_db = cursor.fetchone()
     print(f"Connected to database: {current_db[0]}")
@@ -33,7 +33,7 @@ try:
     current_user = cursor.fetchone()
     print(f"Connected as user: {current_user[0]}\n")
 
-    # Create a table
+    # Create test table
     cursor.execute("""
         CREATE TABLE Users (
             id INT PRIMARY KEY,
@@ -43,7 +43,7 @@ try:
     """)
     print("Created table.\n")
     
-    # Insert data into table
+    # Insert test data into table
     cursor.execute("INSERT INTO Users (id, name, age) VALUES (?, ?, ?)", (1, "Jim", 20))
     cursor.execute("INSERT INTO Users (id, name, age) VALUES (?, ?, ?)", (2, "Alice", 21))
     print("Inserted data into table.\n")
@@ -51,13 +51,13 @@ try:
     # Commit to database
     conn.commit()
 
-    # Select and print from "Users"
+    # Output data from table
     cursor.execute("SELECT * FROM Users")
 
     for row in cursor.fetchall():
         print(row)
     
-    # Delete table from database
+    # Delete table from database and commit
     cursor.execute("DROP TABLE Users")
     conn.commit()
     print("\nDeleted table.\n")

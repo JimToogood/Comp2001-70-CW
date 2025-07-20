@@ -1,0 +1,4 @@
+CREATE OR ALTER PROCEDURE CW2.Get_Locations AS
+BEGIN
+    SELECT * FROM CW2.Locations ORDER BY location_id;
+END;

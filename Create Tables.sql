@@ -1,13 +1,18 @@
 USE COMP2001_JToogood;
 
+--DROP TABLE CW2.Comments;
+--DROP TABLE CW2.Users;
+--DROP TABLE CW2.Trails;
+--DROP TABLE CW2.Locations;
+
 CREATE TABLE CW2.Locations (
     location_id INT PRIMARY KEY IDENTITY(1, 1),
-    location_name NVARCHAR(50) NOT NULL
+    location_name NVARCHAR(50) UNIQUE NOT NULL
 );
 
 CREATE TABLE CW2.Trails (
     trail_id INT PRIMARY KEY IDENTITY(1, 1),
-    trail_name NVARCHAR(50) NOT NULL,
+    trail_name NVARCHAR(50) UNIQUE NOT NULL,
     distance FLOAT NOT NULL,
     elevation_gain FLOAT NOT NULL,
     estimated_time FLOAT NOT NULL,

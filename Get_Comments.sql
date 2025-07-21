@@ -1,0 +1,4 @@
+CREATE OR ALTER PROCEDURE CW2.Get_Comments AS
+BEGIN
+    SELECT * FROM CW2.Comments ORDER BY comment_id;
+END;

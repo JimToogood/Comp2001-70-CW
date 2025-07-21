@@ -2,7 +2,7 @@ CREATE OR ALTER PROCEDURE CW2.Delete_Location
     @location_id INT
 AS
 BEGIN
-    -- Check if location is used in any trails
+    -- If location is used in any trails
     IF EXISTS (SELECT 1 FROM CW2.Trails WHERE location_id = @location_id) BEGIN
         ;THROW 50000, 'Cannot delete location as it is still referenced in CW2.Trails', 0;
         RETURN;

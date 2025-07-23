@@ -10,7 +10,6 @@ def get_locations():
         # Open connection to database
         conn = get_connection()
         cursor = conn.cursor()
-        print("\nDatabase opened.\n")
 
         # Run get command
         cursor.execute("EXEC CW2.Get_Locations")
@@ -22,10 +21,12 @@ def get_locations():
         return jsonify(results)
     
     except Exception as error:
-        # Output error as json
+        # Output error as json with error code
         return (jsonify({"error": str(error)}), 500)
 
     finally:
         # Close connection to database
         conn.close()
-        print("Database closed.\n")
+
+
+# TODO: POST, PATCH, DELETE

@@ -33,6 +33,5 @@ CREATE TABLE CW2.Comments (
     user_id INT NOT NULL REFERENCES CW2.Users(user_id),
     content NVARCHAR(255) NOT NULL,
     created_dt DATETIME NOT NULL DEFAULT GETDATE(),
-    last_edited_dt DATETIME NULL,
-    is_archived BIT NOT NULL DEFAULT 0
+    last_edited_dt DATETIME NULL
 );

@@ -14,7 +14,12 @@ app.register_blueprint(users.blueprint)
 # Handler for default domain
 @app.route("/")
 def index():
-    return "Flask is successfully running!"
+    return """
+        Add /comments to the URL to see comments.<br>
+        Add /locations to the URL to see locations.<br>
+        Add /trails to the URL to see trails.<br>
+        Add /users to the URL to see users.
+    """
 
 # Run app
 if __name__ == "__main__":

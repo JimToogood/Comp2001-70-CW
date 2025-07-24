@@ -5,15 +5,19 @@ from database import get_connection
 blueprint = Blueprint("trails", __name__, url_prefix="/trails")
 
 @blueprint.route("", methods=["GET"])
-def get_trails():
+@blueprint.route("/<int:trail_id>", methods=["GET"])
+def get_trail(trail_id=None):
     try:
         # Open connection to database
         conn = get_connection()
         cursor = conn.cursor()
 
         # Run get command
-        cursor.execute("EXEC CW2.Get_Trails")
-        
+        if trail_id == None:
+            cursor.execute("EXEC CW2.Get_Trails")
+        else:
+            cursor.execute("EXEC CW2.Get_Trail_By_ID @trail_id = ?", trail_id)
+
         # Convert output to json
         columns = [column[0] for column in cursor.description]
         results = [dict(zip(columns, row)) for row in cursor.fetchall()]
@@ -68,7 +72,7 @@ def create_trail():
                 @estimated_time = ?,
                 @route_type = ?,
                 @difficulty = ?,
-                @location_id = ?    
+                @location_id = ?
             """, (
                 data["trail_name"],
                 data["distance"],
@@ -113,7 +117,7 @@ def update_trail(trail_id):
                 @estimated_time = ?,
                 @route_type = ?,
                 @difficulty = ?,
-                @location_id = ?    
+                @location_id = ?
             """,
                 # data.get() is used over data[] so that if the value is not provided, NULL is used instead of producing an error
                 trail_id,
@@ -128,7 +132,7 @@ def update_trail(trail_id):
         
         # Commit changes to database
         conn.commit()
-        return (jsonify({"message": f"Trail {trail_id} updated successfully"}), 200)   # 200 = OK status code
+        return (jsonify({"message": f"Trail {trail_id} updated successfully"}), 200)    # 200 = OK status code
     
     except Exception as error:
         # Output error as json with error code

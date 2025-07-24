@@ -1,0 +1,5 @@
+# Requires Python 3.9.6 or newer
+
+# Core dependencies
+Flask==2.2.2
+pyodbc==5.2.0

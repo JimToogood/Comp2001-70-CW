@@ -1,0 +1,20 @@
+tags:
+  - Locations
+summary: Delete an existing location
+description: Delete an existing location.
+parameters:
+  - name: location_id
+    in: path
+    required: true
+    description: ID of location to be deleted
+    schema:
+      type: integer
+responses:
+  200:
+    description: Location deleted successfully
+  404:
+    description: Location does not exist
+  409:
+    description: Cannot delete location as it is still referenced in Trails
+  500:
+    description: Internal server error

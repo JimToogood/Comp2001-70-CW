@@ -1,7 +1,7 @@
 CREATE OR ALTER PROCEDURE CW2.Update_User
     @user_id INT,
-    @email NVARCHAR(50),
-    @role NVARCHAR(10)
+    @email NVARCHAR(50) = NULL,
+    @role NVARCHAR(10) = NULL
 AS
 BEGIN
     -- If user doesnt exist
@@ -18,7 +18,7 @@ BEGIN
 
     -- If above checks are passed
     UPDATE CW2.Users
-        SET email = @email,
-        role = @role
+        SET email = COALESCE(@email, email),
+        role = COALESCE(@role, role)
     WHERE user_id = @user_id;
 END;

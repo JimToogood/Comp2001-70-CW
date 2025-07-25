@@ -1,0 +1,27 @@
+tags:
+  - Users
+summary: Retrieve all or a single user(s)
+description: Retrieve all users or a single user if user_id is provided.
+parameters:
+  - name: user_id
+    in: path
+    required: false
+    description: Optional ID of user to retrieve
+    schema:
+      type: integer
+responses:
+  200:
+    description: A list of users or a single user
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          user_id:
+            type: integer
+          email:
+            type: string
+          role:
+            type: string
+  500:
+    description: Internal server error

@@ -1,0 +1,18 @@
+tags:
+  - Trails
+summary: Delete an existing trail
+description: Delete an existing trail.
+parameters:
+  - name: trail_id
+    in: path
+    required: true
+    description: ID of trail to be deleted
+    schema:
+      type: integer
+responses:
+  200:
+    description: Trail deleted successfully
+  404:
+    description: Trail does not exist
+  500:
+    description: Internal server error

@@ -1,0 +1,29 @@
+tags:
+  - Users
+summary: Create a new user
+description: Create a new user.
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - email
+        - role
+      properties:
+        email:
+          type: string
+          description: Email of user being created
+        role:
+          type: string
+          description: Role of user being created
+responses:
+  201:
+    description: User successfully created
+  400:
+    description: Missing required inputs
+  409:
+    description: Email already exists
+  500:
+    description: Internal server error

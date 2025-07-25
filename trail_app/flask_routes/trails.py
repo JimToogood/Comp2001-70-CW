@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flasgger import swag_from
 from database import get_connection
 
 
@@ -6,6 +7,7 @@ blueprint = Blueprint("trails", __name__, url_prefix="/trails")
 
 @blueprint.route("", methods=["GET"])
 @blueprint.route("/<int:trail_id>", methods=["GET"])
+@swag_from("docs/get_trail.yml")
 def get_trail(trail_id=None):
     try:
         # Open connection to database
@@ -22,11 +24,11 @@ def get_trail(trail_id=None):
         columns = [column[0] for column in cursor.description]
         results = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
-        return jsonify(results)
+        return (jsonify(results), 200)  # 200 = OK status code
     
     except Exception as error:
-        # Output error as json with error code
-        return (jsonify({"error": str(error)}), 500)
+        # Output error as json
+        return (jsonify({"error": str(error)}), 500)    # 500 = Internal Server Error status code
 
     finally:
         # Close connection to database
@@ -34,6 +36,7 @@ def get_trail(trail_id=None):
 
 
 @blueprint.route("", methods=["POST"])
+@swag_from("docs/create_trail.yml")
 def create_trail():
     required_inputs = [
         "trail_name",
@@ -56,7 +59,7 @@ def create_trail():
     
     if missing_inputs != []:
         # Output error json with missing requirements specified
-        return (jsonify({"error": f"Missing requirement(s) = {', '.join(missing_inputs)}"}), 500)
+        return (jsonify({"error": f"Missing requirement(s) = {', '.join(missing_inputs)}"}), 400)   # 400 = Bad Request status code
 
     try:
         # Open connection to database
@@ -88,8 +91,13 @@ def create_trail():
         return (jsonify({"message": "Trail inserted successfully"}), 201)   # 201 = Created status code
     
     except Exception as error:
-        # Output error as json with error code
-        return (jsonify({"error": str(error)}), 500)
+        # Output error as json
+        if "Location does not exist" in str(error):
+            return (jsonify({"error": "Location does not exist"}), 404)     # 404 = Not Found status code
+        elif "Trail with that name already exists" in str(error):
+            return (jsonify({"error": "Trail with that name already exists"}), 409)     # 409 = Conflict status code
+        else:
+            return (jsonify({"error": str(error)}), 500)    # 500 = Internal Server Error status code
 
     finally:
         # Close connection to database
@@ -98,6 +106,7 @@ def create_trail():
 
 # PATCH is used instead of PUT so that only values that are to be changed have to be provided
 @blueprint.route("/<int:trail_id>", methods=["PATCH"])
+@swag_from("docs/update_trail.yml")
 def update_trail(trail_id):
     # Get given inputs from user
     data = request.get_json()
@@ -133,10 +142,15 @@ def update_trail(trail_id):
         # Commit changes to database
         conn.commit()
         return (jsonify({"message": f"Trail {trail_id} updated successfully"}), 200)    # 200 = OK status code
-    
+
     except Exception as error:
-        # Output error as json with error code
-        return (jsonify({"error": str(error)}), 500)
+        # Output error as json
+        if "Trail does not exist" in str(error):
+            return (jsonify({"error": "Trail does not exist"}), 404)    # 404 = Not Found status code
+        elif "Location does not exist" in str(error):
+            return (jsonify({"error": "Location does not exist"}), 404)     # 404 = Not Found status code
+        else:
+            return (jsonify({"error": str(error)}), 500)    # 500 = Internal Server Error status code
 
     finally:
         # Close connection to database
@@ -144,6 +158,7 @@ def update_trail(trail_id):
 
 
 @blueprint.route("/<int:trail_id>", methods=["DELETE"])
+@swag_from("docs/delete_trail.yml")
 def delete_trail(trail_id):
     try:
         # Open connection to database
@@ -158,8 +173,11 @@ def delete_trail(trail_id):
         return (jsonify({"message": f"Trail {trail_id} deleted successfully"}), 200)    # 200 = OK status code
     
     except Exception as error:
-        # Output error as json with error code
-        return (jsonify({"error": str(error)}), 500)
+        # Output error as json
+        if "Trail does not exist" in str(error):
+            return (jsonify({"error": "Trail does not exist"}), 404)    # 404 = Not Found status code
+        else:
+            return (jsonify({"error": str(error)}), 500)    # 500 = Internal Server Error status code
 
     finally:
         # Close connection to database

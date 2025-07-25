@@ -1,0 +1,48 @@
+tags:
+  - Trails
+summary: Update an existing trail
+description: Update an existing trail only specifying the values you want to update.
+parameters:
+  - name: trail_id
+    in: path
+    required: true
+    description: ID of trail to be updated
+    schema:
+      type: integer
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        trail_name:
+          type: string
+          description: New name of trail
+        distance:
+          type: number
+          format: float
+          description: New distance of trail
+        elevation_gain:
+          type: number
+          format: float
+          description: New elevation gain of trail
+        estimated_time:
+          type: number
+          format: float
+          description: New estimated time of trail
+        route_type:
+          type: string
+          description: New route type of trail
+        difficulty:
+          type: string
+          description: New difficulty of trail
+        location_id:
+          type: integer
+          description: New ID of location of trail
+responses:
+  200:
+    description: Trail updated successfully
+  404:
+    description: Trail or location does not exist
+  500:
+    description: Internal server error

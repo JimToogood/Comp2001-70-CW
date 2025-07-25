@@ -2,6 +2,7 @@
 
 TODO: Write a good README.md that includes:
 - Description of the micro-service
+- Labels swagger docs location
 - Features break down
 - Prerequisites listed
 - Setup walkthrough

@@ -1,0 +1,25 @@
+tags:
+  - Locations
+summary: Retrieve all or a single location(s)
+description: Retrieve all locations or a single location if location_id is provided.
+parameters:
+  - name: location_id
+    in: path
+    required: false
+    description: Optional ID of location to retrieve
+    schema:
+      type: integer
+responses:
+  200:
+    description: A list of locations or a single location
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          location_id:
+            type: integer
+          location_name:
+            type: string
+  500:
+    description: Internal server error

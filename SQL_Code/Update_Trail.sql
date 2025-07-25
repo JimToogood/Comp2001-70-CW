@@ -18,7 +18,7 @@ BEGIN
     -- If location is provided, but doesnt exist
     IF @location_id IS NOT NULL BEGIN
         IF NOT EXISTS (SELECT 1 FROM CW2.Locations WHERE location_id = @location_id) BEGIN
-            ;THROW 50001, 'Invalid location ID', 1;
+            ;THROW 50007, 'Location does not exist', 7;
             RETURN;
         END
     END

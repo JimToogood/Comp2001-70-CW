@@ -1,0 +1,18 @@
+tags:
+  - Comments
+summary: Delete an existing comment
+description: Delete an existing comment.
+parameters:
+  - name: comment_id
+    in: path
+    required: true
+    description: ID of comment to be deleted
+    schema:
+      type: integer
+responses:
+  200:
+    description: Comment deleted successfully
+  404:
+    description: Comment does not exist
+  500:
+    description: Internal server error

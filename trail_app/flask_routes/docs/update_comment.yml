@@ -1,0 +1,27 @@
+tags:
+  - Comments
+summary: Update an existing comment
+description: Update the content field of an existing comment.
+parameters:
+  - name: comment_id
+    in: path
+    required: true
+    description: ID of comment to be updated
+    schema:
+      type: integer
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: New content of comment
+responses:
+  200:
+    description: Comment updated successfully
+  404:
+    description: Comment does not exist
+  500:
+    description: Internal server error

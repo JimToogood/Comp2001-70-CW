@@ -1,0 +1,54 @@
+tags:
+  - Trails
+summary: Create a new trail
+description: Create a new trail.
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - trail_name
+        - distance
+        - elevation_gain
+        - estimated_time
+        - route_type
+        - difficulty
+        - location_id
+      properties:
+        trail_name:
+          type: string
+          description: Name of trail being created
+        distance:
+          type: number
+          format: float
+          description: Distance of trail being created
+        elevation_gain:
+          type: number
+          format: float
+          description: Elevation gain of trail being created
+        estimated_time:
+          type: number
+          format: float
+          description: Estimated time of trail being created
+        route_type:
+          type: string
+          description: Route type of trail being created
+        difficulty:
+          type: string
+          description: Difficulty of trail being created
+        location_id:
+          type: integer
+          description: ID of location of trail being created
+responses:
+  201:
+    description: Trail successfully created
+  400:
+    description: Missing required inputs
+  404:
+    description: Location does not exist
+  409:
+    description: Trail with that name already exists
+  500:
+    description: Internal server error

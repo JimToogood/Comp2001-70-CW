@@ -1,0 +1,33 @@
+tags:
+  - Comments
+summary: Create a new comment
+description: Create a new comment.
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - trail_id
+        - user_id
+        - content
+      properties:
+        trail_id:
+          type: integer
+          description: ID of trail being commented on
+        user_id:
+          type: integer
+          description: ID of user posting comment
+        content:
+          type: string
+          description: Content of comment
+responses:
+  201:
+    description: Comment successfully created
+  400:
+    description: Missing required inputs
+  404:
+    description: Trail or user does not exist
+  500:
+    description: Internal server error

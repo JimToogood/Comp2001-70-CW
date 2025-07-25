@@ -1,0 +1,32 @@
+tags:
+  - Users
+summary: Update an existing user
+description: Update an existing user only specifying the values you want to update.
+parameters:
+  - name: user_id
+    in: path
+    required: true
+    description: ID of user to be updated
+    schema:
+      type: integer
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        email:
+          type: string
+          description: New email of user
+        role:
+          type: string
+          description: New role of user
+responses:
+  200:
+    description: User updated successfully
+  404:
+    description: User does not exist
+  409:
+    description: Email already exists
+  500:
+    description: Internal server error

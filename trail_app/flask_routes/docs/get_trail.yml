@@ -1,0 +1,40 @@
+tags:
+  - Trails
+summary: Retrieve all or a single trail(s)
+description: Retrieve all trails or a single trail if trail_id is provided.
+parameters:
+  - name: trail_id
+    in: path
+    required: false
+    description: Optional ID of trail to retrieve
+    schema:
+      type: integer
+responses:
+  200:
+    description: A list of trails or a single trail
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          trail_id:
+            type: integer
+          trail_name:
+            type: string
+          distance:
+            type: number
+            format: float
+          elevation_gain:
+            type: number
+            format: float
+          estimated_time:
+            type: number
+            format: float
+          route_type:
+            type: string
+          difficulty:
+            type: string
+          location_id:
+            type: integer
+  500:
+    description: Internal server error

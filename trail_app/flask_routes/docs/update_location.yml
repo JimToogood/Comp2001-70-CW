@@ -1,0 +1,29 @@
+tags:
+  - Locations
+summary: Update an existing location
+description: Update the name of an existing location.
+parameters:
+  - name: location_id
+    in: path
+    required: true
+    description: ID of location to be updated
+    schema:
+      type: integer
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        location_name:
+          type: string
+          description: New name of location
+responses:
+  200:
+    description: Location updated successfully
+  404:
+    description: Location does not exist
+  409:
+    description: Location with that name already exists
+  500:
+    description: Internal server error

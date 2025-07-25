@@ -1,0 +1,25 @@
+tags:
+  - Locations
+summary: Create a new location
+description: Create a new location.
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - location_name
+      properties:
+        location_name:
+          type: string
+          description: Name of location being created
+responses:
+  201:
+    description: Location successfully created
+  400:
+    description: Missing location_name
+  409:
+    description: Location with that name already exists
+  500:
+    description: Internal server error

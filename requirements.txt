@@ -3,3 +3,4 @@
 # Core dependencies
 Flask==2.2.2
 pyodbc==5.2.0
+flasgger==0.9.7.1

@@ -1,0 +1,35 @@
+tags:
+  - Comments
+summary: Retrieve all or a single comment(s)
+description: Retrieve all comments or a single comment if comment_id is provided.
+parameters:
+  - name: comment_id
+    in: path
+    required: false
+    description: Optional ID of comment to retrieve
+    schema:
+      type: integer
+responses:
+  200:
+    description: A list of comments or a single comment
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          comment_id:
+            type: integer
+          trail_id:
+            type: integer
+          user_id:
+            type: integer
+          content:
+            type: string
+          created_dt:
+            type: string
+            format: date-time
+          last_edited_dt:
+            type: string
+            format: date-time
+  500:
+    description: Internal server error

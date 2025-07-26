@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+.git
+.gitignore
+.vscode/
+.DS_Store
+*.pages
+*.pdf
+sql_code/

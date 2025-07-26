@@ -1,6 +1,7 @@
-# Requires Python 3.9.6 or newer
+# Requires Python 3.9
 
 # Core dependencies
 Flask==2.2.2
+Werkzeug==2.3.8
 pyodbc==5.2.0
 flasgger==0.9.7.1

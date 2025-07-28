@@ -3,6 +3,11 @@ tags:
 summary: Delete an existing user
 description: Delete an existing user.
 parameters:
+  - name: user-credentials
+    in: header
+    type: string
+    required: true
+    description: User credentials, format = email::password
   - name: user_id
     in: path
     required: true
@@ -12,6 +17,12 @@ parameters:
 responses:
   200:
     description: User deleted successfully
+  400:
+    description: Invalid user credentials format
+  401:
+    description: Missing user credentials
+  403:
+    description: Verification failed/Auth server error/Cannot update your own account
   404:
     description: User does not exist
   500:

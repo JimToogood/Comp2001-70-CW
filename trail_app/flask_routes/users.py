@@ -1,12 +1,14 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, g
 from flasgger import swag_from
 from database import get_connection
+from auth import require_auth
 
 
 blueprint = Blueprint("users", __name__, url_prefix="/users")
 
 @blueprint.route("", methods=["GET"])
 @blueprint.route("/<int:user_id>", methods=["GET"])
+@require_auth
 @swag_from("docs/get_user.yml")
 def get_user(user_id=None):
     try:
@@ -28,7 +30,10 @@ def get_user(user_id=None):
     
     except Exception as error:
         # Output error as json
-        return (jsonify({"error": str(error)}), 500)    # 500 = Internal Server Error status code
+        if "User does not exist" in str(error):
+            return (jsonify({"error": "User does not exist"}), 404)     # 404 = Not Found status code
+        else:
+            return (jsonify({"error": str(error)}), 500)    # 500 = Internal Server Error status code
 
     finally:
         # Close connection to database
@@ -36,6 +41,7 @@ def get_user(user_id=None):
 
 
 @blueprint.route("", methods=["POST"])
+@require_auth
 @swag_from("docs/create_user.yml")
 def create_user():
     required_inputs = [
@@ -89,6 +95,7 @@ def create_user():
 
 # PATCH is used instead of PUT so that only values that are to be changed have to be provided
 @blueprint.route("/<int:user_id>", methods=["PATCH"])
+@require_auth
 @swag_from("docs/update_user.yml")
 def update_user(user_id):
     # Get given inputs from user
@@ -98,6 +105,14 @@ def update_user(user_id):
         # Open connection to database
         conn = get_connection()
         cursor = conn.cursor()
+
+        # Get email of user
+        cursor.execute("EXEC CW2.Get_User_By_ID @user_id = ?", user_id)
+        user = cursor.fetchone()
+
+        # Check to ensure user is not editing their own account
+        if user.email == g.current_user_email:
+            return (jsonify({"error": "Cannot update your own account"}), 403)  # 403 = Forbidden status code
 
         # Run update command
         cursor.execute("""
@@ -131,12 +146,21 @@ def update_user(user_id):
 
 
 @blueprint.route("/<int:user_id>", methods=["DELETE"])
+@require_auth
 @swag_from("docs/delete_user.yml")
 def delete_user(user_id):
     try:
         # Open connection to database
         conn = get_connection()
         cursor = conn.cursor()
+
+        # Get email of user
+        cursor.execute("EXEC CW2.Get_User_By_ID @user_id = ?", user_id)
+        user = cursor.fetchone()
+
+        # Check to ensure user is not editing their own account
+        if user.email == g.current_user_email:
+            return (jsonify({"error": "Cannot update your own account"}), 403)  # 403 = Forbidden status code
 
         # Run delete command
         cursor.execute("EXEC CW2.Delete_User @user_id = ?", user_id)

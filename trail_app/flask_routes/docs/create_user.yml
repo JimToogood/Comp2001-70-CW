@@ -3,6 +3,11 @@ tags:
 summary: Create a new user
 description: Create a new user.
 parameters:
+  - name: user-credentials
+    in: header
+    type: string
+    required: true
+    description: User credentials, format = email::password
   - name: body
     in: body
     required: true
@@ -22,7 +27,11 @@ responses:
   201:
     description: User successfully created
   400:
-    description: Missing required inputs
+    description: Missing required inputs/Invalid user credentials format
+  401:
+    description: Missing user credentials
+  403:
+    description: Verification failed/Auth server error
   409:
     description: Email already exists
   500:

@@ -1,12 +1,14 @@
 from flask import Blueprint, jsonify, request
 from flasgger import swag_from
 from database import get_connection
+from auth import require_auth
 
 
 blueprint = Blueprint("trails", __name__, url_prefix="/trails")
 
 @blueprint.route("", methods=["GET"])
 @blueprint.route("/<int:trail_id>", methods=["GET"])
+@require_auth
 @swag_from("docs/get_trail.yml")
 def get_trail(trail_id=None):
     try:
@@ -28,7 +30,10 @@ def get_trail(trail_id=None):
     
     except Exception as error:
         # Output error as json
-        return (jsonify({"error": str(error)}), 500)    # 500 = Internal Server Error status code
+        if "Trail does not exist" in str(error):
+            return (jsonify({"error": "Trail does not exist"}), 404)    # 404 = Not Found status code
+        else:
+            return (jsonify({"error": str(error)}), 500)    # 500 = Internal Server Error status code
 
     finally:
         # Close connection to database
@@ -36,6 +41,7 @@ def get_trail(trail_id=None):
 
 
 @blueprint.route("", methods=["POST"])
+@require_auth
 @swag_from("docs/create_trail.yml")
 def create_trail():
     required_inputs = [
@@ -106,6 +112,7 @@ def create_trail():
 
 # PATCH is used instead of PUT so that only values that are to be changed have to be provided
 @blueprint.route("/<int:trail_id>", methods=["PATCH"])
+@require_auth
 @swag_from("docs/update_trail.yml")
 def update_trail(trail_id):
     # Get given inputs from user
@@ -158,6 +165,7 @@ def update_trail(trail_id):
 
 
 @blueprint.route("/<int:trail_id>", methods=["DELETE"])
+@require_auth
 @swag_from("docs/delete_trail.yml")
 def delete_trail(trail_id):
     try:

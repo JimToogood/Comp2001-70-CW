@@ -3,6 +3,11 @@ tags:
 summary: Create a new location
 description: Create a new location.
 parameters:
+  - name: user-credentials
+    in: header
+    type: string
+    required: true
+    description: User credentials, format = email::password
   - name: body
     in: body
     required: true
@@ -18,7 +23,11 @@ responses:
   201:
     description: Location successfully created
   400:
-    description: Missing location_name
+    description: Missing location_name/Invalid user credentials format
+  401:
+    description: Missing user credentials
+  403:
+    description: Verification failed/Auth server error
   409:
     description: Location with that name already exists
   500:

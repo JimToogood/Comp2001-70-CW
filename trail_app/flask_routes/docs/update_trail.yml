@@ -3,6 +3,11 @@ tags:
 summary: Update an existing trail
 description: Update an existing trail only specifying the values you want to update.
 parameters:
+  - name: user-credentials
+    in: header
+    type: string
+    required: true
+    description: User credentials, format = email::password
   - name: trail_id
     in: path
     required: true
@@ -42,6 +47,12 @@ parameters:
 responses:
   200:
     description: Trail updated successfully
+  400:
+    description: Invalid user credentials format
+  401:
+    description: Missing user credentials
+  403:
+    description: Verification failed/Auth server error
   404:
     description: Trail or location does not exist
   500:

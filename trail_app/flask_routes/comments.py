@@ -1,12 +1,14 @@
 from flask import Blueprint, jsonify, request
 from flasgger import swag_from
 from database import get_connection
+from auth import require_auth
 
 
 blueprint = Blueprint("comments", __name__, url_prefix="/comments")
 
 @blueprint.route("", methods=["GET"])
 @blueprint.route("/<int:comment_id>", methods=["GET"])
+@require_auth
 @swag_from("docs/get_comment.yml")
 def get_comment(comment_id=None):
     try:
@@ -28,7 +30,10 @@ def get_comment(comment_id=None):
     
     except Exception as error:
         # Output error as json
-        return (jsonify({"error": str(error)}), 500)    # 500 = Internal Server Error status code
+        if "Comment does not exist" in str(error):
+            return (jsonify({"error": "Comment does not exist"}), 404)  # 404 = Not Found status code
+        else:
+            return (jsonify({"error": str(error)}), 500)    # 500 = Internal Server Error status code
 
     finally:
         # Close connection to database
@@ -36,6 +41,7 @@ def get_comment(comment_id=None):
 
 
 @blueprint.route("", methods=["POST"])
+@require_auth
 @swag_from("docs/create_comment.yml")
 def create_comment():
     required_inputs = [
@@ -94,6 +100,7 @@ def create_comment():
 
 # PUT is used instead of PATCH as there is only one variable that can be changed
 @blueprint.route("/<int:comment_id>", methods=["PUT"])
+@require_auth
 @swag_from("docs/update_comment.yml")
 def update_comment(comment_id):
     # Get given inputs from user
@@ -136,6 +143,7 @@ def update_comment(comment_id):
 
 
 @blueprint.route("/<int:comment_id>", methods=["DELETE"])
+@require_auth
 @swag_from("docs/delete_comment.yml")
 def delete_comment(comment_id):
     try:

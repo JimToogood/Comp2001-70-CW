@@ -3,6 +3,11 @@ tags:
 summary: Retrieve all or a single location(s)
 description: Retrieve all locations or a single location if location_id is provided.
 parameters:
+  - name: user-credentials
+    in: header
+    type: string
+    required: true
+    description: User credentials, format = email::password
   - name: location_id
     in: path
     required: false
@@ -21,5 +26,13 @@ responses:
             type: integer
           location_name:
             type: string
+  400:
+    description: Invalid user credentials format
+  401:
+    description: Missing user credentials
+  403:
+    description: Verification failed/Auth server error
+  404:
+    description: Location does not exist
   500:
     description: Internal server error

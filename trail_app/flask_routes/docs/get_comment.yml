@@ -3,6 +3,11 @@ tags:
 summary: Retrieve all or a single comment(s)
 description: Retrieve all comments or a single comment if comment_id is provided.
 parameters:
+  - name: user-credentials
+    in: header
+    type: string
+    required: true
+    description: User credentials, format = email::password
   - name: comment_id
     in: path
     required: false
@@ -31,5 +36,13 @@ responses:
           last_edited_dt:
             type: string
             format: date-time
+  400:
+    description: Invalid user credentials format
+  401:
+    description: Missing user credentials
+  403:
+    description: Verification failed/Auth server error
+  404:
+    description: Comment does not exist
   500:
     description: Internal server error

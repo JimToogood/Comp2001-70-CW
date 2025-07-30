@@ -42,7 +42,6 @@ def check_auth_server(email, password):
     if response.status_code == 200:     # 200 = OK status code
         try:
             json_response = response.json()
-            print(json_response)
             
             # If account is verified
             if json_response == ["Verified", "True"]:

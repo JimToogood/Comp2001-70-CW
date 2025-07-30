@@ -23,6 +23,7 @@ CREATE TABLE CW2.Trails (
 
 CREATE TABLE CW2.Users (
     user_id INT PRIMARY KEY IDENTITY(1, 1),
+    user_name NVARCHAR(50) NOT NULL,
     email NVARCHAR(50) UNIQUE NOT NULL,
     role NVARCHAR(10) NOT NULL
 );

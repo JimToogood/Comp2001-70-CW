@@ -17,6 +17,9 @@ parameters:
         - email
         - role
       properties:
+        user_name:
+          type: string
+          description: Name of user being created
         email:
           type: string
           description: Email of user being created
@@ -31,7 +34,9 @@ responses:
   401:
     description: Missing user credentials
   403:
-    description: Verification failed/Auth server error
+    description: Verification failed/Auth server error/Only admins can create accounts
+  404:
+    description: User does not exist
   409:
     description: Email already exists
   500:

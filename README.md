@@ -19,8 +19,8 @@ Usage Instructions:
   
 *Or to use the prebuilt docker image provided (built using --platform linux/amd64, tested on MacOS, but should still run on Windows machines):*  
   
-3) Download prebuilt image from here (too big for GitHub): https://drive.google.com/file/d/1kpAmCNnJorlQNhNWm7e40HBorMmDTI8m/view?usp=sharing  
-4) Run:  docker load -i trail-microservice.tar  
+3) Download prebuilt image from here (too big for GitHub): https://drive.google.com/file/d/1nynbXqbKc2UqYgbbp9wao9HuXrVMGfLI/view?usp=sharing  
+4) Run:  docker load -i trail_app.tar  
 5) Run:  docker run -p 8000:8000 jimtoogood/trail_app  
 6) Open http://127.0.0.1:8000/apidocs in any web browser  
 

@@ -24,6 +24,8 @@ responses:
         properties:
           user_id:
             type: integer
+          user_name:
+            type: string
           email:
             type: string
           role:

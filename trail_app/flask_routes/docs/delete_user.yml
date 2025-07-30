@@ -22,7 +22,7 @@ responses:
   401:
     description: Missing user credentials
   403:
-    description: Verification failed/Auth server error/Cannot update your own account
+    description: Verification failed/Auth server error/Only admins can delete accounts/Cannot delete your own account
   404:
     description: User does not exist
   500:

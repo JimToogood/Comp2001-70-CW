@@ -45,6 +45,7 @@ def get_user(user_id=None):
 @swag_from("docs/create_user.yml")
 def create_user():
     required_inputs = [
+        "user_name",
         "email",
         "role"
     ]
@@ -67,12 +68,22 @@ def create_user():
         conn = get_connection()
         cursor = conn.cursor()
 
+        # Get logged in user
+        cursor.execute("EXEC CW2.Get_User_By_Email @email = ?", g.current_user_email)
+        logged_in_user = cursor.fetchone()
+
+        # Check to ensure logged in user is an admin
+        if logged_in_user.role != "admin":
+            return (jsonify({"error": "Only admins can create accounts"}), 403)   # 403 = Forbidden status code
+
         # Run insert command
         cursor.execute("""
             EXEC CW2.Insert_User
+                @user_name = ?,
                 @email = ?,
                 @role = ?
             """, (
+                data["user_name"],
                 data["email"],
                 data["role"]
         ))
@@ -83,7 +94,9 @@ def create_user():
     
     except Exception as error:
         # Output error as json
-        if "Email already exists" in str(error):
+        if "User does not exist" in str(error):
+            return (jsonify({"error": "User does not exist"}), 404)     # 404 = Not Found status code
+        elif "Email already exists" in str(error):
             return (jsonify({"error": "Email already exists"}), 409)    # 409 = Conflict status code
         else:
             return (jsonify({"error": str(error)}), 500)    # 500 = Internal Server Error status code
@@ -106,23 +119,27 @@ def update_user(user_id):
         conn = get_connection()
         cursor = conn.cursor()
 
-        # Get email of user
-        cursor.execute("EXEC CW2.Get_User_By_ID @user_id = ?", user_id)
-        user = cursor.fetchone()
+        # Get logged in user
+        cursor.execute("EXEC CW2.Get_User_By_Email @email = ?", g.current_user_email)
+        logged_in_user = cursor.fetchone()
 
-        # Check to ensure user is not editing their own account
-        if user.email == g.current_user_email:
-            return (jsonify({"error": "Cannot update your own account"}), 403)  # 403 = Forbidden status code
+        # Check to ensure logged in user is an admin and not editing their own account
+        if logged_in_user.role != "admin":
+            return (jsonify({"error": "Only admins can update accounts"}), 403)   # 403 = Forbidden status code
+        elif logged_in_user.user_id == user_id:
+            return (jsonify({"error": "Cannot update your own account"}), 403)    # 403 = Forbidden status code
 
         # Run update command
         cursor.execute("""
             EXEC CW2.Update_User
                 @user_id = ?,
+                @user_name = ?,
                 @email = ?,
                 @role = ?
             """,
                 # data.get() is used over data[] so that if the value is not provided, NULL is used instead of producing an error
                 user_id,
+                data.get("user_name"),
                 data.get("email"),
                 data.get("role")
         )
@@ -154,13 +171,15 @@ def delete_user(user_id):
         conn = get_connection()
         cursor = conn.cursor()
 
-        # Get email of user
-        cursor.execute("EXEC CW2.Get_User_By_ID @user_id = ?", user_id)
-        user = cursor.fetchone()
+        # Get logged in user
+        cursor.execute("EXEC CW2.Get_User_By_Email @email = ?", g.current_user_email)
+        logged_in_user = cursor.fetchone()
 
-        # Check to ensure user is not editing their own account
-        if user.email == g.current_user_email:
-            return (jsonify({"error": "Cannot update your own account"}), 403)  # 403 = Forbidden status code
+        # Check to ensure logged in user is an admin and not editing their own account
+        if logged_in_user.role != "admin":
+            return (jsonify({"error": "Only admins can delete accounts"}), 403)   # 403 = Forbidden status code
+        elif logged_in_user.user_id == user_id:
+            return (jsonify({"error": "Cannot delete your own account"}), 403)    # 403 = Forbidden status code
 
         # Run delete command
         cursor.execute("EXEC CW2.Delete_User @user_id = ?", user_id)

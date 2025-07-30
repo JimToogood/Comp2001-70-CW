@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, g
 from flasgger import swag_from
 from database import get_connection
 from auth import require_auth
@@ -46,7 +46,6 @@ def get_comment(comment_id=None):
 def create_comment():
     required_inputs = [
         "trail_id",
-        "user_id",
         "content"
     ]
 
@@ -68,6 +67,10 @@ def create_comment():
         conn = get_connection()
         cursor = conn.cursor()
 
+        # Get logged in user
+        cursor.execute("EXEC CW2.Get_User_By_Email @email = ?", g.current_user_email)
+        logged_in_user = cursor.fetchone()
+
         # Run insert command
         cursor.execute("""
             EXEC CW2.Insert_Comment
@@ -76,7 +79,7 @@ def create_comment():
                 @content = ?
             """, (
                 data["trail_id"],
-                data["user_id"],
+                logged_in_user.user_id,
                 data["content"]
         ))
 
@@ -116,23 +119,37 @@ def update_comment(comment_id):
         conn = get_connection()
         cursor = conn.cursor()
 
-        # Run update command
-        cursor.execute("""
-            EXEC CW2.Update_Comment
-                @comment_id = ?,
-                @content = ?
-            """,
-                comment_id,
-                data["content"]
-        )
-        
-        # Commit changes to database
-        conn.commit()
-        return (jsonify({"message": f"Comment {comment_id} updated successfully"}), 200)    # 200 = OK status code
+        # Get logged in user
+        cursor.execute("EXEC CW2.Get_User_By_Email @email = ?", g.current_user_email)
+        logged_in_user = cursor.fetchone()
+
+        # Get comment
+        cursor.execute("EXEC CW2.Get_Comment_By_ID @comment_id = ?", comment_id)
+        comment = cursor.fetchone()
+
+        # Check to ensure logged in user is an admin or comment is their own
+        if logged_in_user.role == "admin" or logged_in_user.user_id == comment.user_id:
+            # Run update command
+            cursor.execute("""
+                EXEC CW2.Update_Comment
+                    @comment_id = ?,
+                    @content = ?
+                """,
+                    comment_id,
+                    data["content"]
+            )
+            
+            # Commit changes to database
+            conn.commit()
+            return (jsonify({"message": f"Comment {comment_id} updated successfully"}), 200)    # 200 = OK status code
+        else:
+            return (jsonify({"error": "Only admins can edit other peoples comments"}), 403)     # 403 = Forbidden status code
     
     except Exception as error:
         # Output error as json
-        if "Comment does not exist" in str(error):
+        if "User does not exist" in str(error):
+            return (jsonify({"error": "User does not exist"}), 404)     # 404 = Not Found status code
+        elif "Comment does not exist" in str(error):
             return (jsonify({"error": "Comment does not exist"}), 404)  # 404 = Not Found status code
         else:
             return (jsonify({"error": str(error)}), 500)    # 500 = Internal Server Error status code
@@ -151,16 +168,30 @@ def delete_comment(comment_id):
         conn = get_connection()
         cursor = conn.cursor()
 
-        # Run delete command
-        cursor.execute("EXEC CW2.Delete_Comment @comment_id = ?", comment_id)
-        
-        # Commit changes to database
-        conn.commit()
-        return (jsonify({"message": f"Comment {comment_id} deleted successfully"}), 200)    # 200 = OK status code
+        # Get logged in user
+        cursor.execute("EXEC CW2.Get_User_By_Email @email = ?", g.current_user_email)
+        logged_in_user = cursor.fetchone()
+
+        # Get comment
+        cursor.execute("EXEC CW2.Get_Comment_By_ID @comment_id = ?", comment_id)
+        comment = cursor.fetchone()
+
+        # Check to ensure logged in user is an admin or comment is their own
+        if logged_in_user.role == "admin" or logged_in_user.user_id == comment.user_id:
+            # Run delete command
+            cursor.execute("EXEC CW2.Delete_Comment @comment_id = ?", comment_id)
+            
+            # Commit changes to database
+            conn.commit()
+            return (jsonify({"message": f"Comment {comment_id} deleted successfully"}), 200)    # 200 = OK status code
+        else:
+            return (jsonify({"error": "Only admins can delete other peoples comments"}), 403)   # 403 = Forbidden status code
     
     except Exception as error:
         # Output error as json
-        if "Comment does not exist" in str(error):
+        if "User does not exist" in str(error):
+            return (jsonify({"error": "User does not exist"}), 404)     # 404 = Not Found status code
+        elif "Comment does not exist" in str(error):
             return (jsonify({"error": "Comment does not exist"}), 404)  # 404 = Not Found status code
         else:
             return (jsonify({"error": str(error)}), 500)    # 500 = Internal Server Error status code

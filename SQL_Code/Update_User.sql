@@ -1,5 +1,6 @@
 CREATE OR ALTER PROCEDURE CW2.Update_User
     @user_id INT,
+    @user_name NVARCHAR(50) = NULL,
     @email NVARCHAR(50) = NULL,
     @role NVARCHAR(10) = NULL
 AS
@@ -18,7 +19,8 @@ BEGIN
 
     -- If above checks are passed
     UPDATE CW2.Users
-        SET email = COALESCE(@email, email),
+        SET user_name = COALESCE(@user_name, user_name),
+        email = COALESCE(@email, email),
         role = COALESCE(@role, role)
     WHERE user_id = @user_id;
 END;

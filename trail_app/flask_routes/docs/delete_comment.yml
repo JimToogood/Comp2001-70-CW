@@ -22,8 +22,8 @@ responses:
   401:
     description: Missing user credentials
   403:
-    description: Verification failed/Auth server error
+    description: Verification failed/Auth server error/Only admins can delete other peoples comments
   404:
-    description: Comment does not exist
+    description: Comment/User does not exist
   500:
     description: Internal server error

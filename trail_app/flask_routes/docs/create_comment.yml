@@ -15,15 +15,11 @@ parameters:
       type: object
       required:
         - trail_id
-        - user_id
         - content
       properties:
         trail_id:
           type: integer
           description: ID of trail being commented on
-        user_id:
-          type: integer
-          description: ID of user posting comment
         content:
           type: string
           description: Content of comment
@@ -37,6 +33,6 @@ responses:
   403:
     description: Verification failed/Auth server error
   404:
-    description: Trail or user does not exist
+    description: Trail/User does not exist
   500:
     description: Internal server error
